@@ -4,8 +4,13 @@ import { Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import PatientForm from "./patient-form";
+import dynamic from "next/dynamic";
 import type { Patient } from "../lib/types";
+
+const PatientForm = dynamic(() => import("./patient-form"), {
+  ssr: false,
+  loading: () => <div className="p-8 text-center text-sm text-[#444844]">Loading form...</div>
+});
 
 type AddPatientModalTriggerProps = {
   label?: string;

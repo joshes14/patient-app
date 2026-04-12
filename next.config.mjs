@@ -8,6 +8,9 @@ const nextConfig = {
       : outputMode === "standalone"
         ? "standalone"
         : undefined,
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
   images: {
     unoptimized: true,
   },

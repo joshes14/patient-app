@@ -195,6 +195,10 @@ db.exec(`
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
   );
+
+  CREATE INDEX IF NOT EXISTS idx_patients_name ON patients(last_name, first_name);
+  CREATE INDEX IF NOT EXISTS idx_patients_created ON patients(created_at);
+  CREATE INDEX IF NOT EXISTS idx_patients_status ON patients(review_status);
 `);
 
 // Perform simple migrations for existing DB files that predate schema changes.
