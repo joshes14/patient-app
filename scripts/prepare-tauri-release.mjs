@@ -59,7 +59,14 @@ if (process.platform === "win32") {
   const nodeDir = dirname(process.execPath);
   for (const fileName of readdirSync(nodeDir)) {
     const extension = extname(fileName).toLowerCase();
-    if (extension !== ".dll" && extension !== ".dat") {
+    const lowerName = fileName.toLowerCase();
+    if (
+      extension !== ".dll" &&
+      extension !== ".dat" &&
+      lowerName !== "license" &&
+      lowerName !== "license.txt" &&
+      lowerName !== "nodevars.bat"
+    ) {
       continue;
     }
 
