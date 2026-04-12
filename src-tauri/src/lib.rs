@@ -42,14 +42,20 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
     }
 
     let mut command = Command::new(sidecar_binary);
+
+    // We capture OS level stdout/stderr directly into a file to catch severe V8/Node startup crashes
+    let log_file_path = app_data_dir.join("next-os-crash.log");
+    let stdout_file = std::fs::File::create(&log_file_path).ok();
+    let stderr_file = stdout_file.as_ref().and_then(|f| f.try_clone().ok());
+
     command
         .arg(launcher_path)
         .current_dir(&sidecar_root)
         .env("NEXT_SERVER_PORT", NEXT_SIDE_CAR_PORT)
         .env("CLINIC_DB_PATH", db_path)
         .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null());
+        .stdout(stdout_file.map(Stdio::from).unwrap_or_else(Stdio::null))
+        .stderr(stderr_file.map(Stdio::from).unwrap_or_else(Stdio::null));
 
     #[cfg(target_os = "windows")]
     {
