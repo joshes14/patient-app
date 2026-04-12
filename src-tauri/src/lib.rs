@@ -94,10 +94,30 @@ pub fn run() {
                         .build(),
                 )?;
             } else {
-                let mut child = spawn_sidecar(app.handle())?;
-                wait_for_sidecar(&mut child)?;
-                if let Ok(mut slot) = app.state::<Arc<Mutex<Option<Child>>>>().lock() {
-                    *slot = Some(child);
+                match spawn_sidecar(app.handle()) {
+                    Ok(mut child) => {
+                        if let Err(e) = wait_for_sidecar(&mut child) {
+                            if let Ok(app_dir) = app.path().app_data_dir() {
+                                let _ = std::fs::write(
+                                    app_dir.join("tauri-crash.log"),
+                                    format!("wait_for_sidecar error: {}", e),
+                                );
+                            }
+                            return Err(e);
+                        }
+                        if let Ok(mut slot) = app.state::<Arc<Mutex<Option<Child>>>>().lock() {
+                            *slot = Some(child);
+                        }
+                    }
+                    Err(e) => {
+                        if let Ok(app_dir) = app.path().app_data_dir() {
+                            let _ = std::fs::write(
+                                app_dir.join("tauri-crash.log"),
+                                format!("spawn_sidecar error: {}", e),
+                            );
+                        }
+                        return Err(e);
+                    }
                 }
             }
             Ok(())
