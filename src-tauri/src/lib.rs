@@ -77,8 +77,16 @@ fn wait_for_sidecar(child: &mut Child) -> Result<(), Box<dyn std::error::Error>>
             return Err(format!("next sidecar exited before startup (status: {status})").into());
         }
 
-        if TcpStream::connect_timeout(&address, Duration::from_millis(125)).is_ok() {
-            return Ok(());
+        if let Ok(mut stream) = TcpStream::connect_timeout(&address, Duration::from_millis(125)) {
+            use std::io::{Read, Write};
+            let request = b"GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n";
+            if stream.write_all(request).is_ok() {
+                let mut buffer = [0; 12];
+                // Read at least the beginning of the HTTP response
+                if stream.read(&mut buffer).is_ok() && buffer.starts_with(b"HTTP/1.1") {
+                    return Ok(());
+                }
+            }
         }
         sleep(Duration::from_millis(125));
     }
