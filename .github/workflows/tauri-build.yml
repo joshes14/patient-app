@@ -43,24 +43,44 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      - name: Prepare standalone sidecar assets (Windows)
+        if: matrix.os == 'windows-latest'
+        run: npm run tauri:prepare
+
       - name: Build ${{ matrix.bundle }} bundle
         run: npm run tauri:build -- --bundles ${{ matrix.bundle }}
         env:
           CI: "true"
 
-      - name: Verify packaged sidecar files (Windows)
+      - name: Verify packaged installer exists (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          $sidecar = Get-ChildItem -Path "src-tauri/target/release/bundle" -Recurse -Filter "next-sidecar.exe" | Select-Object -First 1
-          if (-not $sidecar) {
-            Write-Error "next-sidecar.exe was not found in packaged bundle output"
+          $installer = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis" -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $installer) {
+            Write-Error "Windows installer not found under src-tauri/target/release/bundle/nsis"
             exit 1
           }
 
-          $launcher = Get-ChildItem -Path "src-tauri/target/release/bundle" -Recurse -Filter "next-launcher.js" | Select-Object -First 1
+      - name: Verify sidecar inputs exist (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $sidecar = Get-Item "src-tauri/binaries/next-sidecar-x86_64-pc-windows-msvc.exe" -ErrorAction SilentlyContinue
+          if (-not $sidecar) {
+            Write-Error "Expected sidecar not found: src-tauri/binaries/next-sidecar-x86_64-pc-windows-msvc.exe"
+            exit 1
+          }
+
+          $launcher = Get-Item "release/next/next-launcher.js" -ErrorAction SilentlyContinue
           if (-not $launcher) {
-            Write-Error "next-launcher.js was not found in packaged bundle resources"
+            Write-Error "Expected launcher not found: release/next/next-launcher.js"
+            exit 1
+          }
+
+          $server = Get-Item "release/next/server/server.js" -ErrorAction SilentlyContinue
+          if (-not $server) {
+            Write-Error "Expected Next standalone server not found: release/next/server/server.js"
             exit 1
           }
 
