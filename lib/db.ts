@@ -8,7 +8,7 @@ import {
   DEFAULT_PRACTITIONER_ID,
 } from "@/lib/constants";
 
-const DB_PATH = path.join(process.cwd(), "clinic.db");
+const DB_PATH = process.env.CLINIC_DB_PATH?.trim() || path.join(process.cwd(), "clinic.db");
 
 const db = new Database(DB_PATH);
 

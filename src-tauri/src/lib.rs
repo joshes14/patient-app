@@ -12,9 +12,17 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
     let resource_dir = app.path().resource_dir()?;
     let sidecar_root = resource_dir.join("next");
     let launcher_path = sidecar_root.join("next-launcher.js");
+    let app_data_dir = app.path().app_data_dir()?;
+    std::fs::create_dir_all(&app_data_dir)?;
+    let db_path = app_data_dir.join("clinic.db");
 
     if !launcher_path.exists() {
         return Err("missing next launcher resource".into());
+    }
+
+    let server_entrypoint = sidecar_root.join("server").join("server.js");
+    if !server_entrypoint.exists() {
+        return Err("missing bundled next standalone server".into());
     }
 
     #[cfg(target_os = "windows")]
@@ -28,10 +36,19 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
         .ok_or("missing executable parent directory")?;
     let sidecar_binary = executable_dir.join(sidecar_binary_name);
 
+    if !sidecar_binary.exists() {
+        return Err(format!(
+            "next sidecar binary not found at {}",
+            sidecar_binary.display()
+        )
+        .into());
+    }
+
     let child = Command::new(sidecar_binary)
         .arg(launcher_path)
         .current_dir(&sidecar_root)
         .env("NEXT_SERVER_PORT", NEXT_SIDE_CAR_PORT)
+        .env("CLINIC_DB_PATH", db_path)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
@@ -40,11 +57,15 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
     Ok(child)
 }
 
-fn wait_for_sidecar() -> Result<(), Box<dyn std::error::Error>> {
+fn wait_for_sidecar(child: &mut Child) -> Result<(), Box<dyn std::error::Error>> {
     let port = NEXT_SIDE_CAR_PORT.parse::<u16>()?;
     let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port);
 
-    for _ in 0..80 {
+    for _ in 0..240 {
+        if let Some(status) = child.try_wait()? {
+            return Err(format!("next sidecar exited before startup (status: {status})").into());
+        }
+
         if TcpStream::connect_timeout(&address, Duration::from_millis(125)).is_ok() {
             return Ok(());
         }
@@ -68,11 +89,11 @@ pub fn run() {
                         .build(),
                 )?;
             } else {
-                let child = spawn_sidecar(app.handle())?;
+                let mut child = spawn_sidecar(app.handle())?;
+                wait_for_sidecar(&mut child)?;
                 if let Ok(mut slot) = app.state::<Arc<Mutex<Option<Child>>>>().lock() {
                     *slot = Some(child);
                 }
-                wait_for_sidecar()?;
             }
             Ok(())
         })

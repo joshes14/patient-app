@@ -37,6 +37,8 @@ git push origin v0.1.0
 - Builds happen natively on each OS runner, so Windows `.exe` is produced on Windows CI.
 - The packaged app launches a bundled Next.js server sidecar automatically.
 - No Docker and no terminal steps are needed for your friend.
+- macOS packaging includes an additional re-sign + DMG repack step to avoid the "app is damaged" false-positive on unsigned local bundles.
+- Windows build now uses WebView2 `offlineInstaller` mode to reduce first-launch failures on machines missing WebView2 or with restricted network.
 
 ## Local check (optional)
 

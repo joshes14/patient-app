@@ -94,5 +94,13 @@ if (process.platform !== "win32") {
   chmodSync(sidecarPath, 0o755);
 }
 
+const windowsHostTriple = "x86_64-pc-windows-msvc";
+if (targetTriple !== windowsHostTriple) {
+  const placeholderWindowsSidecar = join(sidecarDir, `next-sidecar-${windowsHostTriple}.exe`);
+  if (!existsSync(placeholderWindowsSidecar)) {
+    copyFileSync(sidecarPath, placeholderWindowsSidecar);
+  }
+}
+
 console.log("Prepared Tauri release assets at", outputDir);
 console.log("Prepared Node sidecar at", sidecarPath);
