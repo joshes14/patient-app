@@ -39,6 +39,7 @@ git push origin v0.1.0
 - No Docker and no terminal steps are needed for your friend.
 - macOS packaging includes an additional re-sign + DMG repack step to avoid the "app is damaged" false-positive on unsigned local bundles.
 - Windows build now uses WebView2 `offlineInstaller` mode to reduce first-launch failures on machines missing WebView2 or with restricted network.
+- Windows packaging now embeds a full local Node runtime in app resources (instead of only an executable), preventing immediate crashes from missing Node runtime DLLs.
 
 ## Local check (optional)
 

@@ -12,6 +12,7 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
     let resource_dir = app.path().resource_dir()?;
     let sidecar_root = resource_dir.join("next");
     let launcher_path = sidecar_root.join("next-launcher.js");
+    let runtime_root = sidecar_root.join("runtime");
     let app_data_dir = app.path().app_data_dir()?;
     std::fs::create_dir_all(&app_data_dir)?;
     let db_path = app_data_dir.join("clinic.db");
@@ -26,19 +27,15 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
     }
 
     #[cfg(target_os = "windows")]
-    let sidecar_binary_name = "next-sidecar.exe";
+    let sidecar_binary_name = "node.exe";
     #[cfg(not(target_os = "windows"))]
-    let sidecar_binary_name = "next-sidecar";
+    let sidecar_binary_name = "node";
 
-    let app_executable = std::env::current_exe()?;
-    let executable_dir = app_executable
-        .parent()
-        .ok_or("missing executable parent directory")?;
-    let sidecar_binary = executable_dir.join(sidecar_binary_name);
+    let sidecar_binary = runtime_root.join(sidecar_binary_name);
 
     if !sidecar_binary.exists() {
         return Err(format!(
-            "next sidecar binary not found at {}",
+            "embedded node runtime not found at {}",
             sidecar_binary.display()
         )
         .into());

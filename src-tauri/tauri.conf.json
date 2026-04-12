@@ -29,9 +29,6 @@
     "resources": {
       "../release/next": "next"
     },
-    "externalBin": [
-      "binaries/next-sidecar"
-    ],
     "windows": {
       "webviewInstallMode": {
         "type": "offlineInstaller",

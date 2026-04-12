@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -66,9 +68,15 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          $sidecar = Get-Item "src-tauri/binaries/next-sidecar-x86_64-pc-windows-msvc.exe" -ErrorAction SilentlyContinue
-          if (-not $sidecar) {
-            Write-Error "Expected sidecar not found: src-tauri/binaries/next-sidecar-x86_64-pc-windows-msvc.exe"
+          $runtime = Get-Item "release/next/runtime/node.exe" -ErrorAction SilentlyContinue
+          if (-not $runtime) {
+            Write-Error "Expected Node runtime not found: release/next/runtime/node.exe"
+            exit 1
+          }
+
+          $runtimeDll = Get-ChildItem -Path "release/next/runtime" -Filter "*.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $runtimeDll) {
+            Write-Error "Expected Node runtime DLL files were not found in release/next/runtime"
             exit 1
           }
 

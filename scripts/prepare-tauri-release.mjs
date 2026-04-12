@@ -7,42 +7,10 @@ import {
   chmodSync,
   readdirSync,
 } from "node:fs";
-import { join, resolve } from "node:path";
-import { spawnSync } from "node:child_process";
+import { dirname, extname, join, resolve } from "node:path";
 
 const root = resolve(process.cwd());
 const outputDir = join(root, "release", "next");
-const sidecarDir = join(root, "src-tauri", "binaries");
-
-const commandOutput = (command, args) => {
-  const result = spawnSync(command, args, {
-    encoding: "utf8",
-    shell: process.platform === "win32",
-  });
-
-  if (result.status !== 0) {
-    throw new Error(result.stderr || result.stdout || `Failed to run ${command}`);
-  }
-
-  return result.stdout.trim();
-};
-
-const resolveTargetTriple = () => {
-  try {
-    return commandOutput("rustc", ["--print", "host-tuple"]);
-  } catch {
-    const rustVerboseVersion = commandOutput("rustc", ["-Vv"]);
-    const hostLine = rustVerboseVersion
-      .split(/\r?\n/)
-      .find((line) => line.startsWith("host:"));
-
-    if (!hostLine) {
-      throw new Error("Could not resolve rust target triple from `rustc -Vv`");
-    }
-
-    return hostLine.replace("host:", "").trim();
-  }
-};
 
 const ensureExists = (path, label) => {
   if (!existsSync(path)) {
@@ -76,31 +44,30 @@ const launcherSource = join(root, "scripts", "next-standalone-launcher.js");
 ensureExists(launcherSource, "Next launcher script");
 copyFileSync(launcherSource, join(outputDir, "next-launcher.js"));
 
-mkdirSync(sidecarDir, { recursive: true });
-for (const fileName of readdirSync(sidecarDir)) {
-  if (fileName.startsWith("next-sidecar-")) {
-    rmSync(join(sidecarDir, fileName), { force: true });
-  }
-}
+const runtimeDir = join(outputDir, "runtime");
+mkdirSync(runtimeDir, { recursive: true });
 
-const targetTriple = resolveTargetTriple();
-const sidecarFileName =
-  process.platform === "win32" ? `next-sidecar-${targetTriple}.exe` : `next-sidecar-${targetTriple}`;
-const sidecarPath = join(sidecarDir, sidecarFileName);
-
-copyFileSync(process.execPath, sidecarPath);
+const nodeExecutableName = process.platform === "win32" ? "node.exe" : "node";
+const runtimeNodePath = join(runtimeDir, nodeExecutableName);
+copyFileSync(process.execPath, runtimeNodePath);
 
 if (process.platform !== "win32") {
-  chmodSync(sidecarPath, 0o755);
+  chmodSync(runtimeNodePath, 0o755);
 }
 
-const windowsHostTriple = "x86_64-pc-windows-msvc";
-if (targetTriple !== windowsHostTriple) {
-  const placeholderWindowsSidecar = join(sidecarDir, `next-sidecar-${windowsHostTriple}.exe`);
-  if (!existsSync(placeholderWindowsSidecar)) {
-    copyFileSync(sidecarPath, placeholderWindowsSidecar);
+if (process.platform === "win32") {
+  const nodeDir = dirname(process.execPath);
+  for (const fileName of readdirSync(nodeDir)) {
+    const extension = extname(fileName).toLowerCase();
+    if (extension !== ".dll" && extension !== ".dat") {
+      continue;
+    }
+
+    const sourceFile = join(nodeDir, fileName);
+    const targetFile = join(runtimeDir, fileName);
+    copyFileSync(sourceFile, targetFile);
   }
 }
 
 console.log("Prepared Tauri release assets at", outputDir);
-console.log("Prepared Node sidecar at", sidecarPath);
+console.log("Prepared embedded Node runtime at", runtimeNodePath);
