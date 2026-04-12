@@ -10,9 +10,10 @@ import {
 
 const DB_PATH = process.env.CLINIC_DB_PATH?.trim() || path.join(process.cwd(), "clinic.db");
 
-const db = new Database(DB_PATH);
+const db = new Database(DB_PATH, { timeout: 15000 });
 
 db.pragma("journal_mode = WAL");
+db.pragma("busy_timeout = 15000");
 db.pragma("foreign_keys = ON");
 
 db.exec(`
