@@ -28,3 +28,5 @@ clinic.db-*
 # tauri sidecar build artifacts
 src-tauri/binaries/
 release/
+
+opencode.json
