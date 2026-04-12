@@ -1,0 +1,257 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f8fbfb;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --text: #13302d;
+  --muted: #4b6966;
+  --ring: #2b9d8f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 8% 12%, rgba(43, 157, 143, 0.16), transparent 35%),
+    radial-gradient(circle at 88% 8%, rgba(109, 183, 173, 0.2), transparent 40%),
+    linear-gradient(180deg, #f7fbfa 0%, #f3f8f7 52%, #eef6f5 100%);
+}
+
+body {
+  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.45;
+}
+
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Times New Roman", serif;
+  letter-spacing: -0.02em;
+}
+
+.font-body {
+  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.font-heading {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Times New Roman", serif;
+}
+
+a {
+  color: inherit;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: 2px solid color-mix(in srgb, var(--ring) 70%, white);
+  outline-offset: 1px;
+}
+
+@keyframes studio-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes route-content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(10px);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes patient-section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes patient-detail-enter {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+    filter: blur(16px);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(10px);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes patient-header-morph {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+    filter: blur(8px);
+    border-radius: 38px;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+    border-radius: 30px;
+  }
+}
+
+@keyframes patient-grid-morph {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes dashboard-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(10px);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes dashboard-item-enter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(7px);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.route-enter {
+  animation: route-content-enter 440ms cubic-bezier(0.25, 0.9, 0.35, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+.patient-section-enter {
+  animation: patient-section-enter 220ms cubic-bezier(0.25, 0.9, 0.35, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+.patient-detail-enter {
+  animation: patient-detail-enter 720ms cubic-bezier(0.18, 1, 0.32, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+.patient-header-morph {
+  animation: patient-header-morph 680ms cubic-bezier(0.18, 1, 0.32, 1) both;
+  will-change: opacity, transform, filter, border-radius;
+}
+
+.patient-grid-morph {
+  animation: patient-grid-morph 620ms cubic-bezier(0.18, 1, 0.32, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+.dashboard-reveal {
+  animation: dashboard-panel-enter 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+.dashboard-item-reveal {
+  animation: dashboard-item-enter 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-enter,
+  .patient-section-enter,
+  .patient-detail-enter,
+  .patient-header-morph,
+  .patient-grid-morph,
+  .dashboard-reveal,
+  .dashboard-item-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

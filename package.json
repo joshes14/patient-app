@@ -1,0 +1,47 @@
+{
+  "name": "patient-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:standalone": "node scripts/build-standalone.mjs",
+    "start": "next start",
+    "lint": "next lint",
+    "test:smoke": "tsx scripts/run-smoke-tests.ts",
+    "test:smoke:api": "RUN_API_SMOKE=1 tsx scripts/run-smoke-tests.ts",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:prepare": "npm run build:standalone && node scripts/prepare-tauri-release.mjs",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "better-sqlite3": "^12.8.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.7.0",
+    "next": "^14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.72.1",
+    "tailwind-merge": "^3.5.0",
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.10.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.5.2",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.35",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.21.0",
+    "typescript": "^5.4.5"
+  }
+}

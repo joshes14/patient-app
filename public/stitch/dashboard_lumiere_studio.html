@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Patient Dashboard | Lumiere Dental</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#211c13",
+                        "surface-dim": "#dadad5",
+                        "tertiary-fixed-dim": "#cfc5b6",
+                        "on-surface": "#1a1c19",
+                        "primary": "#181e1a",
+                        "on-surface-variant": "#444844",
+                        "surface-variant": "#e3e3de",
+                        "secondary": "#5f5f57",
+                        "surface-tint": "#5a605b",
+                        "error": "#ba1a1a",
+                        "primary-container": "#2d332f",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#e4e3d9",
+                        "on-background": "#1a1c19",
+                        "surface-container-high": "#e8e8e3",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#959b96",
+                        "inverse-primary": "#c2c8c2",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed": "#171d19",
+                        "tertiary-fixed": "#ece1d2",
+                        "on-primary-fixed-variant": "#424844",
+                        "inverse-on-surface": "#f1f1ec",
+                        "background": "#fafaf5",
+                        "surface": "#fafaf5",
+                        "surface-bright": "#fafaf5",
+                        "on-tertiary-container": "#a1998b",
+                        "outline-variant": "#c4c7c3",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c2c8c2",
+                        "on-secondary-container": "#65655d",
+                        "on-secondary-fixed-variant": "#474740",
+                        "surface-container-low": "#f4f4ef",
+                        "on-tertiary-fixed": "#201b12",
+                        "surface-container": "#eeeee9",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e4e3d9",
+                        "tertiary-container": "#373127",
+                        "surface-container-highest": "#e3e3de",
+                        "secondary-fixed-dim": "#c8c7be",
+                        "on-secondary-fixed": "#1b1c16",
+                        "on-tertiary-fixed-variant": "#4c463b",
+                        "on-secondary": "#ffffff",
+                        "outline": "#747874",
+                        "primary-fixed": "#dee4de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #fafaf5; color: #1a1c19; }
+        .font-noto-serif { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen w-72 left-0 sticky bg-[#f4f4ef] dark:bg-[#1a1c19] text-[#181e1a] dark:text-[#fafaf5] py-10 pl-6 pr-0 font-manrope text-sm font-medium tracking-wide">
+<div class="mb-12 px-6">
+<h1 class="font-noto-serif text-xl italic text-[#2d332f] dark:text-[#fafaf5]">The Sanctuary</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] opacity-50 mt-1">Premium Dental Care</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-4 py-4 px-6 bg-[#ffffff] dark:bg-[#2d332f] text-[#181e1a] dark:text-[#fafaf5] rounded-l-full shadow-sm transition-all duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-4 py-4 px-6 text-[#444844] dark:text-[#e8e8e3] opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">folder_shared</span>
+<span>Patient Records</span>
+</a>
+<a class="flex items-center gap-4 py-4 px-6 text-[#444844] dark:text-[#e8e8e3] opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span>Clinical Notes</span>
+</a>
+<a class="flex items-center gap-4 py-4 px-6 text-[#444844] dark:text-[#e8e8e3] opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">biotech</span>
+<span>Imaging</span>
+</a>
+<a class="flex items-center gap-4 py-4 px-6 text-[#444844] dark:text-[#e8e8e3] opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Billing</span>
+</a>
+</nav>
+<div class="mt-auto pt-10 border-t border-outline-variant/10 mr-6">
+<a class="flex items-center gap-4 py-3 px-6 text-[#444844] dark:text-[#e8e8e3] opacity-70 hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-6 text-[#444844] dark:text-[#e8e8e3] opacity-70 hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-12 py-6 max-w-[1920px] mx-auto bg-[#fafaf5] dark:bg-[#181e1a] text-[#181e1a] dark:text-[#fafaf5] font-noto-serif text-lg tracking-tight">
+<div class="flex items-center gap-12">
+<div class="font-noto-serif text-2xl font-light tracking-widest text-[#181e1a] dark:text-[#fafaf5]">Lumiere Dental</div>
+<nav class="hidden lg:flex items-center gap-8 text-sm font-body font-normal">
+<a class="text-[#181e1a] dark:text-[#fafaf5] font-semibold border-b-2 border-[#181e1a] dark:border-[#fafaf5] pb-1" href="#">Patients</a>
+<a class="text-[#444844] dark:text-[#e8e8e3] hover:text-[#181e1a] transition-colors duration-300" href="#">Schedule</a>
+<a class="text-[#444844] dark:text-[#e8e8e3] hover:text-[#181e1a] transition-colors duration-300" href="#">Gallery</a>
+<a class="text-[#444844] dark:text-[#e8e8e3] hover:text-[#181e1a] transition-colors duration-300" href="#">Inventory</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm opacity-40">search</span>
+<input class="bg-[#f4f4ef] border-none rounded-full py-2 pl-10 pr-4 text-xs font-body focus:ring-1 focus:ring-primary w-64" placeholder="Search patients..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined p-2 hover:bg-[#f4f4ef] rounded-full transition-colors duration-300">notifications</button>
+<button class="material-symbols-outlined p-2 hover:bg-[#f4f4ef] rounded-full transition-colors duration-300">settings</button>
+<button class="bg-[#2d332f] text-white px-6 py-2.5 rounded-full text-xs font-body font-medium tracking-wide hover:opacity-90 transition-opacity">New Consultation</button>
+<div class="w-10 h-10 rounded-full overflow-hidden ml-2 ring-2 ring-surface-container-high ring-offset-2">
+<img alt="Practitioner Profile" class="w-full h-full object-cover" data-alt="portrait of a professional female dentist in a minimalist clinic environment, soft window light, professional and welcoming" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrX4Zz2xlMX2yolVujeBDVKYt-OXKiVmrfqFadsEmq-y7uAh3iAnll5lbZFmHCE-iHCS-Vt4KXehqdyVconweO1EQWgRUXGxfMN4CZLXPt08Ax7bijCuLtNq6LgAeyw0hyxhY9qq8gyz0wd5URFYL9J0azkFnmA8ZbTi-lz31nVIESVPAvllib5DQmp8xVy9ivBa5Da-gRPCfUi1MM5eEIxW-IDXZ-cF3nTG82IuRqiXk3PyCNYxH7E2zP66LkbBk5GEiy71RAsfs"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="px-12 py-8 max-w-[1920px] w-full mx-auto space-y-12">
+<!-- Welcome Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-outline-variant/10 pb-12">
+<div class="max-w-2xl">
+<h2 class="font-noto-serif text-5xl font-light text-primary tracking-tight leading-tight mb-4">Patient Directory</h2>
+<p class="font-body text-on-surface-variant text-lg font-light leading-relaxed">A curated overview of our community. Manage care journeys with precision and intentionality.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-low px-6 py-4 rounded-xl text-center min-w-[120px]">
+<span class="block text-2xl font-noto-serif text-primary">1,248</span>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">Total Patients</span>
+</div>
+<div class="bg-surface-container-low px-6 py-4 rounded-xl text-center min-w-[120px]">
+<span class="block text-2xl font-noto-serif text-primary">14</span>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">New Today</span>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-12">
+<!-- Patient Ledger -->
+<section class="xl:col-span-8 space-y-6">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-noto-serif text-2xl font-light italic">The Curator's Ledger</h3>
+<div class="flex gap-4 text-xs font-label">
+<button class="px-4 py-2 bg-primary text-white rounded-full">All Records</button>
+<button class="px-4 py-2 bg-surface-container-high text-on-surface rounded-full hover:bg-surface-variant transition-colors">Awaiting Review</button>
+<button class="px-4 py-2 bg-surface-container-high text-on-surface rounded-full hover:bg-surface-variant transition-colors">Archived</button>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Ledger Item 1 -->
+<div class="group bg-surface hover:bg-surface-container-lowest p-6 rounded-xl transition-all duration-500 hover:shadow-[0_24px_40px_-12px_rgba(26,28,25,0.06)] flex items-center gap-8">
+<div class="w-16 h-16 rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+<img alt="Julian Sterling" class="w-full h-full object-cover" data-alt="close-up portrait of a mature man with distinguished features, soft moody lighting, artistic photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARWlS6aooEcw76uVydxbQeNa40qAONWwouZmPaBW1ZrOOyUmENCR7DkvpRN0q-nGsdzs-DycrYSVPJyBI_J_7gWnceYOUE3y1H3ABmD8tFqy7_TWcQCRVW2PTJxE72M-dlunksczTp-76WmV4RG-xiLWS6x48Geht4IXR0u32NmDbJFL8Hw8WRJseq4aUjuuy0FW8bWHsIK6PDenUlalYGh5ATL9XC8pzYdM_bs9ws-TwSfjSR2ehUwELNrlfIl5YJYYWR0Z6XS_c"/>
+</div>
+<div class="flex-1 grid grid-cols-3 gap-4">
+<div>
+<h4 class="font-noto-serif text-xl">Julian Sterling</h4>
+<p class="text-xs text-on-surface-variant mt-1">Ref: #LUM-0924</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Last Visit</span>
+<p class="text-sm font-medium">Oct 12, 2023</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Plan Status</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-[10px] font-semibold">ACTIVE CARE</span>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">visibility</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">more_horiz</button>
+</div>
+</div>
+<!-- Ledger Item 2 -->
+<div class="group bg-surface-container-low hover:bg-surface-container-lowest p-6 rounded-xl transition-all duration-500 hover:shadow-[0_24px_40px_-12px_rgba(26,28,25,0.06)] flex items-center gap-8">
+<div class="w-16 h-16 rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+<img alt="Elena Vause" class="w-full h-full object-cover" data-alt="portrait of a young woman with serene expression, soft morning light, minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiyvatiOfOkuzsu_KSA9ZoFfsBXUadUx2gpnTJ4NLHmMFinE-ZZsjYHsMxoHQHeE79u3HkrF4WvjuBhG4dc-7tzwC1B9kWChRSZKGzkoYTcqLSXlPuT4SmLaMDrGHlmODJJVcXqTPFbMHx2iojNuzuqQ_S8QJ1ZsOGnINisSqlGp_yp0SBF-DTJ8iIu7pM_0NAVFk5Jrg8c9g847EZk6VffAsoN6GC12-Nc0WWCFlXa9lvi6G9UIr63lAJV2koXI-_IGY19Vau9uo"/>
+</div>
+<div class="flex-1 grid grid-cols-3 gap-4">
+<div>
+<h4 class="font-noto-serif text-xl">Elena Vause</h4>
+<p class="text-xs text-on-surface-variant mt-1">Ref: #LUM-1108</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Last Visit</span>
+<p class="text-sm font-medium">Nov 04, 2023</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Plan Status</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[10px] font-semibold">COMPLETED</span>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">visibility</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">more_horiz</button>
+</div>
+</div>
+<!-- Ledger Item 3 -->
+<div class="group bg-surface hover:bg-surface-container-lowest p-6 rounded-xl transition-all duration-500 hover:shadow-[0_24px_40px_-12px_rgba(26,28,25,0.06)] flex items-center gap-8">
+<div class="w-16 h-16 rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+<img alt="Marcus Thorne" class="w-full h-full object-cover" data-alt="headshot of a stylish man with a clean beard, studio lighting, high-end editorial feel" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8tKUxF73Mssfxp7RQUnbxXDt3rCttYPmh5MQQzZP-gOp6J1RBO0f1VIwMpmMP7rJBg7IiXxq1WCjjy2Qy--IxHGx6wBBcv0eyr0wEG23hw8TVaRAYE8M6-ZxbYH9mnh9FvNrguctBklBa-Bg7KBUysQYJF8jrX-MdbavlbuWJMtS8m4sN5-OXFAGULx90F0gjhQL2We8ueeC-Ba4lXbP77_w935EYwhOJceHiNgYTDBTxcm4fLjbco-p3cnhU_YbpxcBK1DUhNJo"/>
+</div>
+<div class="flex-1 grid grid-cols-3 gap-4">
+<div>
+<h4 class="font-noto-serif text-xl">Marcus Thorne</h4>
+<p class="text-xs text-on-surface-variant mt-1">Ref: #LUM-0852</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Last Visit</span>
+<p class="text-sm font-medium">Sept 28, 2023</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Plan Status</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-[10px] font-semibold">ACTIVE CARE</span>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">visibility</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">more_horiz</button>
+</div>
+</div>
+<!-- Ledger Item 4 -->
+<div class="group bg-surface-container-low hover:bg-surface-container-lowest p-6 rounded-xl transition-all duration-500 hover:shadow-[0_24px_40px_-12px_rgba(26,28,25,0.06)] flex items-center gap-8">
+<div class="w-16 h-16 rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+<img alt="Sophia Chen" class="w-full h-full object-cover" data-alt="artistic portrait of an asian woman, thoughtful expression, warm directional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYqMxhsOrhbLbp0i2UeRtBAcAb5GR3ZfRIK6Wn7CJqffpS9E7gZls3LR1T-iQlKsGFqqjjsyMnXbIcgBFkP3eJbSv2GaHe9ZZdt1HgVHReck7c7jQiKtyZYsdlxCoFGngQFuRFHUb1yJ_P-ysgLKseNicCMO_k7eZiLgkSbP6e2NrcoWi52ACezgKXhtvTAGcERwaORmOVuCrQ4xOrlMVMetI_l5A12Y5UE0nOsiL7pMTnTIUHfZVWiGAOTDSsjFCQl1YjeimLFpQ"/>
+</div>
+<div class="flex-1 grid grid-cols-3 gap-4">
+<div>
+<h4 class="font-noto-serif text-xl">Sophia Chen</h4>
+<p class="text-xs text-on-surface-variant mt-1">Ref: #LUM-1215</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Last Visit</span>
+<p class="text-sm font-medium">Oct 30, 2023</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Plan Status</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-semibold">FOLLOW UP</span>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">visibility</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full material-symbols-outlined text-on-surface-variant">more_horiz</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Studio Insights -->
+<section class="xl:col-span-4 space-y-8">
+<div class="bg-surface-container-low p-8 rounded-xl space-y-8">
+<div>
+<h3 class="font-noto-serif text-2xl font-light mb-2">Studio Insights</h3>
+<p class="text-xs font-body text-on-surface-variant">Performance metrics and engagement data.</p>
+</div>
+<!-- Insight 1: Patient Growth (Minimalist Visualization) -->
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant">Monthly Growth</span>
+<span class="font-noto-serif text-xl">+12.4%</span>
+</div>
+<div class="h-24 flex items-end gap-1.5 px-2">
+<div class="flex-1 bg-primary/10 h-[40%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-[55%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-[45%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-[70%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-[60%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-[85%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary h-[100%] rounded-t-sm"></div>
+</div>
+</div>
+<!-- Insight 2: Retention Rate -->
+<div class="pt-8 border-t border-outline-variant/20 space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant">Care Retention</span>
+<span class="font-noto-serif text-xl">94%</span>
+</div>
+<div class="w-full bg-primary/5 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[94%]"></div>
+</div>
+<p class="text-[11px] leading-relaxed text-on-surface-variant font-light italic">Reflecting our commitment to long-term patient wellness and clinical excellence.</p>
+</div>
+<!-- Insight 3: Quick Action Card -->
+<div class="pt-4">
+<div class="relative overflow-hidden rounded-xl bg-primary-container p-6 text-white group cursor-pointer">
+<div class="relative z-10">
+<h4 class="font-noto-serif text-lg leading-tight mb-2">Quarterly Review is Ready</h4>
+<p class="text-xs opacity-70 mb-4">Analyze patient demographics and revenue distribution for Q3.</p>
+<div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider group-hover:translate-x-2 transition-transform">
+                                            Open Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- Decorative subtle texture -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+</div>
+</div>
+</div>
+<!-- Mini Calendar/Upcoming -->
+<div class="bg-surface p-8 border border-outline-variant/10 rounded-xl">
+<h3 class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-6">Upcoming Today</h3>
+<div class="space-y-6">
+<div class="flex gap-4 items-start">
+<div class="text-center">
+<span class="block text-sm font-bold">14:00</span>
+<span class="block text-[10px] opacity-40 uppercase">PM</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium">Restorative Consultation</p>
+<p class="text-xs text-on-surface-variant">Mrs. Eleanor Rigby</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="text-center">
+<span class="block text-sm font-bold">15:30</span>
+<span class="block text-[10px] opacity-40 uppercase">PM</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium">Cosmetic Assessment</p>
+<p class="text-xs text-on-surface-variant">Mr. David Bowen</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+</body></html>

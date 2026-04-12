@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumiere Dental Studio | Entrance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;1,300&amp;family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#211c13",
+                        "surface-dim": "#dadad5",
+                        "tertiary-fixed-dim": "#cfc5b6",
+                        "on-surface": "#1a1c19",
+                        "primary": "#181e1a",
+                        "on-surface-variant": "#444844",
+                        "surface-variant": "#e3e3de",
+                        "secondary": "#5f5f57",
+                        "surface-tint": "#5a605b",
+                        "error": "#ba1a1a",
+                        "primary-container": "#2d332f",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#e4e3d9",
+                        "on-background": "#1a1c19",
+                        "surface-container-high": "#e8e8e3",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#959b96",
+                        "inverse-primary": "#c2c8c2",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed": "#171d19",
+                        "tertiary-fixed": "#ece1d2",
+                        "on-primary-fixed-variant": "#424844",
+                        "inverse-on-surface": "#f1f1ec",
+                        "background": "#fafaf5",
+                        "surface": "#fafaf5",
+                        "surface-bright": "#fafaf5",
+                        "on-tertiary-container": "#a1998b",
+                        "outline-variant": "#c4c7c3",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c2c8c2",
+                        "on-secondary-container": "#65655d",
+                        "on-secondary-fixed-variant": "#474740",
+                        "surface-container-low": "#f4f4ef",
+                        "on-tertiary-fixed": "#201b12",
+                        "surface-container": "#eeeee9",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e4e3d9",
+                        "tertiary-container": "#373127",
+                        "surface-container-highest": "#e3e3de",
+                        "secondary-fixed-dim": "#c8c7be",
+                        "on-secondary-fixed": "#1b1c16",
+                        "on-tertiary-fixed-variant": "#4c463b",
+                        "on-secondary": "#ffffff",
+                        "outline": "#747874",
+                        "primary-fixed": "#dee4de",
+                        "accent-sage": "#7c847a",
+                        "accent-sage-soft": "#b6bdb4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .serif-italic {
+            font-family: 'Noto Serif';
+            font-style: italic;
+        }
+        .shadow-ambient {
+            box-shadow: 0 24px 48px -12px rgba(26, 28, 25, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-accent-sage-soft selection:text-primary">
+<main class="min-h-screen flex flex-col items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+<!-- Background Aesthetic Elements -->
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+<div class="absolute top-[-10%] right-[-5%] w-[40%] h-[60%] rounded-full bg-surface-container-low blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-5%] w-[30%] h-[50%] rounded-full bg-accent-sage-soft/10 blur-[100px]"></div>
+</div>
+<!-- Branding Anchor (Logo) -->
+<div class="mb-12 text-center z-10">
+<h1 class="font-headline text-4xl sm:text-5xl font-light tracking-widest text-primary uppercase">
+                Lumiere
+            </h1>
+<p class="font-headline text-lg sm:text-xl italic text-accent-sage mt-2 tracking-tight">
+                Dental Studio
+            </p>
+</div>
+<!-- Login Card -->
+<section class="w-full max-w-md z-10">
+<div class="bg-surface-container-lowest p-8 sm:p-12 rounded-xl shadow-ambient border border-outline-variant/10">
+<header class="mb-10">
+<h2 class="font-headline text-2xl text-primary font-medium tracking-tight mb-2">Welcome Back</h2>
+<p class="text-on-surface-variant font-body text-sm">Please authenticate to enter the sanctuary.</p>
+</header>
+<form class="space-y-8">
+<!-- Practitioner ID Input -->
+<div class="group">
+<label class="block font-label text-[10px] tracking-[0.2em] text-on-surface-variant uppercase mb-2 ml-1 group-focus-within:text-accent-sage transition-colors duration-300">
+                            Practitioner ID
+                        </label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant/40 text-lg group-focus-within:text-accent-sage/60 transition-colors duration-300">
+                                badge
+                            </span>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 pl-8 text-on-surface focus:ring-0 focus:border-accent-sage transition-all duration-300 placeholder:text-on-surface-variant/20" placeholder="LDS-000-00" type="text"/>
+</div>
+</div>
+<!-- Security Key Input -->
+<div class="group">
+<label class="block font-label text-[10px] tracking-[0.2em] text-on-surface-variant uppercase mb-2 ml-1 group-focus-within:text-accent-sage transition-colors duration-300">
+                            Security Key
+                        </label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant/40 text-lg group-focus-within:text-accent-sage/60 transition-colors duration-300">
+                                passkey
+                            </span>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 pl-8 text-on-surface focus:ring-0 focus:border-accent-sage transition-all duration-300 placeholder:text-on-surface-variant/20" placeholder="••••••••••••" type="password"/>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full bg-primary-container text-on-primary py-4 rounded-lg font-label text-sm tracking-widest uppercase hover:bg-accent-sage transition-all duration-500 shadow-sm active:scale-[0.98]" type="submit">
+                            Enter Practice
+                        </button>
+</div>
+</form>
+<footer class="mt-12 text-center">
+<button class="text-xs text-on-surface-variant hover:text-accent-sage transition-colors duration-300 underline underline-offset-8 decoration-outline-variant/30 hover:decoration-accent-sage/30">
+                        Forgot Security Credentials?
+                    </button>
+</footer>
+</div>
+<!-- Secondary Info -->
+<div class="mt-8 flex flex-col sm:flex-row items-center justify-between px-2 gap-4">
+<div class="flex items-center gap-3 opacity-60">
+<span class="material-symbols-outlined text-sm text-accent-sage">verified_user</span>
+<span class="text-[10px] font-label tracking-wider uppercase">Encrypted Session</span>
+</div>
+<div class="flex items-center gap-3 opacity-60">
+<span class="text-[10px] font-label tracking-wider uppercase">System v4.2.0</span>
+</div>
+</div>
+</section>
+<!-- Decorative Image/Texture -->
+<div class="mt-16 w-full max-w-4xl opacity-40">
+<div class="grid grid-cols-3 gap-6 h-1 w-full">
+<div class="bg-outline-variant/20 rounded-full"></div>
+<div class="bg-accent-sage/20 rounded-full"></div>
+<div class="bg-outline-variant/20 rounded-full"></div>
+</div>
+</div>
+</main>
+<!-- Aesthetic Decorative Side Image (Subtle) -->
+<div class="fixed right-0 top-0 h-full w-[20%] hidden xl:block opacity-[0.03] pointer-events-none">
+<div class="h-full w-full bg-cover bg-center grayscale" data-alt="abstract close-up of smooth porcelain texture with architectural curves and soft natural morning light" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAAoX78p17NAQcgrQR5Ylk9DGW2vPlUF9GWnR-rGNsyc3KxFU12qf6aiTpLDwrWBeHDvOYiU4MNn7luv4LMJ0my_hruvjAW3hNVVJfu2opjptPGrEVJP0cY6yoLE1XrWkGUMqBxLqfYVt5QmnvAysCVM3D_YbwiM3Vs8PF-SW1ma8b-5VUfuTgiq-E0HO8120ZJJe1P-uN0UhDkAwvXDZpNCbhGrrooaTB7ixxOLS3LQZ9e3s5dq1T043ILDlYq59t-TlI_B6RITUQ')">
+</div>
+</div>
+</body></html>

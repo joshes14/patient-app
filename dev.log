@@ -1,0 +1,14 @@
+
+> patient-app@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1317ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 2.2s (550 modules)
+ HEAD /login 200 in 2338ms
+[?25h
