@@ -41,15 +41,23 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
         .into());
     }
 
-    let child = Command::new(sidecar_binary)
+    let mut command = Command::new(sidecar_binary);
+    command
         .arg(launcher_path)
         .current_dir(&sidecar_root)
         .env("NEXT_SERVER_PORT", NEXT_SIDE_CAR_PORT)
         .env("CLINIC_DB_PATH", db_path)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()?;
+        .stderr(Stdio::null());
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        command.creation_flags(0x08000000); // CREATE_NO_WINDOW
+    }
+
+    let child = command.spawn()?;
 
     Ok(child)
 }
