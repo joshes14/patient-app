@@ -49,7 +49,7 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
     let stderr_file = stdout_file.as_ref().and_then(|f| f.try_clone().ok());
 
     command
-        .arg(launcher_path)
+        .arg("next-launcher.js")
         .current_dir(&sidecar_root)
         .env("NEXT_SERVER_PORT", NEXT_SIDE_CAR_PORT)
         .env("CLINIC_DB_PATH", db_path)
