@@ -22,15 +22,15 @@ const toSingleValue = (value?: string | string[]): string => {
   return value ?? "";
 };
 
-export default function PatientPlanPage({ params, searchParams }: PatientPlanPageProps) {
+export default async function PatientPlanPage({ params, searchParams }: PatientPlanPageProps) {
   requirePageAuth();
 
-  const patient = getPatientById(params.id);
+  const patient = await getPatientById(params.id);
   if (!patient) {
     notFound();
   }
 
-  const plans = listTreatmentPlans(patient.id);
+  const plans = await listTreatmentPlans(patient.id);
   const editMode = toSingleValue(searchParams?.edit) === "1";
 
   return (

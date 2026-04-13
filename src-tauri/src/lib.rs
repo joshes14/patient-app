@@ -42,6 +42,10 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
     }
 
     let mut command = Command::new(sidecar_binary);
+    let clinic_backend_url = std::env::var("NEXT_PUBLIC_CLINIC_BACKEND_URL")
+        .or_else(|_| std::env::var("CLINIC_BACKEND_URL"))
+        .ok();
+    let clinic_session_secret = std::env::var("CLINIC_SESSION_SECRET").ok();
 
     // We capture OS level stdout/stderr directly into a file to catch severe V8/Node startup crashes
     let log_file_path = app_data_dir.join("next-os-crash.log");
@@ -53,9 +57,19 @@ fn spawn_sidecar(app: &tauri::AppHandle) -> Result<Child, Box<dyn std::error::Er
         .current_dir(&sidecar_root)
         .env("NEXT_SERVER_PORT", NEXT_SIDE_CAR_PORT)
         .env("CLINIC_DB_PATH", db_path)
+        .env("HOSTNAME", "127.0.0.1")
         .stdin(Stdio::null())
         .stdout(stdout_file.map(Stdio::from).unwrap_or_else(Stdio::null))
         .stderr(stderr_file.map(Stdio::from).unwrap_or_else(Stdio::null));
+
+    if let Some(url) = clinic_backend_url {
+        command.env("CLINIC_BACKEND_URL", &url);
+        command.env("NEXT_PUBLIC_CLINIC_BACKEND_URL", &url);
+    }
+
+    if let Some(secret) = clinic_session_secret {
+        command.env("CLINIC_SESSION_SECRET", &secret);
+    }
 
     #[cfg(target_os = "windows")]
     {

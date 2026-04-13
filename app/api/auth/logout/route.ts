@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
-import { AUTH_COOKIE_NAME } from "@/lib/auth";
+import { clearAuthCookieResponse } from "@/lib/auth";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 
 export const runtime = "nodejs";
 
-export async function POST() {
-  const response = NextResponse.json({ ok: true });
-  response.cookies.set({
-    name: AUTH_COOKIE_NAME,
-    value: "",
-    maxAge: 0,
-    path: "/",
-  });
+export async function POST(request: Request) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, "/api/auth/logout");
+  }
 
-  return response;
+  return clearAuthCookieResponse(NextResponse.json({ ok: true }));
 }

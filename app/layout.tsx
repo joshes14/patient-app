@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   description: "Offline-first patient records for a single dental clinic",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const appSettings = getAppSettings();
+  const appSettings = await getAppSettings();
 
   return (
     <html lang="en">

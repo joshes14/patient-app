@@ -43,6 +43,11 @@ jobs:
         run: npm run tauri:build -- --bundles nsis
         env:
           CI: "true"
+          CLINIC_BACKEND_URL: ${{ secrets.CLINIC_BACKEND_URL }}
+          NEXT_PUBLIC_CLINIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_CLINIC_BACKEND_URL }}
+          CLINIC_SESSION_SECRET: ${{ secrets.CLINIC_SESSION_SECRET }}
+          CLINIC_PASSWORD: ${{ secrets.CLINIC_PASSWORD }}
+          CLINIC_PRACTITIONER_ID: ${{ secrets.CLINIC_PRACTITIONER_ID }}
 
       - name: Verify installer output
         shell: pwsh

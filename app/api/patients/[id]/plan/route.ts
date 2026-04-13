@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import {
   createTreatmentPlan,
@@ -16,13 +17,17 @@ type Context = {
 };
 
 export async function GET(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/plan`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
   try {
-    const plans = listTreatmentPlans(params.id);
+    const plans = await listTreatmentPlans(params.id);
     return NextResponse.json({ plans });
   } catch (error) {
     // Log details for debugging during development
@@ -37,6 +42,10 @@ export async function GET(request: NextRequest, { params }: Context) {
 }
 
 export async function POST(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/plan`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -66,7 +75,7 @@ export async function POST(request: NextRequest, { params }: Context) {
       );
     }
 
-    const plan = createTreatmentPlan(params.id, parsed.data);
+    const plan = await createTreatmentPlan(params.id, parsed.data);
     return NextResponse.json({ plan }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
@@ -78,6 +87,10 @@ export async function POST(request: NextRequest, { params }: Context) {
 }
 
 export async function PATCH(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/plan${new URL(request.url).search}`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -102,7 +115,7 @@ export async function PATCH(request: NextRequest, { params }: Context) {
       );
     }
 
-    const updated = updateTreatmentPlan(params.id, planId, parsed.data);
+    const updated = await updateTreatmentPlan(params.id, planId, parsed.data);
     if (!updated) {
       return NextResponse.json({ error: "Treatment plan not found." }, { status: 404 });
     }

@@ -22,10 +22,10 @@ const toSingleValue = (value?: string | string[]): string => {
   return value ?? "";
 };
 
-export default function PatientOverviewPage({ params, searchParams }: PatientOverviewPageProps) {
+export default async function PatientOverviewPage({ params, searchParams }: PatientOverviewPageProps) {
   requirePageAuth();
 
-  const bundle = getPatientBundle(params.id);
+  const bundle = await getPatientBundle(params.id);
   if (!bundle) {
     notFound();
   }

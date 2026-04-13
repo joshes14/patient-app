@@ -61,13 +61,13 @@ const toStatus = (
   };
 };
 
-export default function HomePage({ searchParams }: HomePageProps) {
+export default async function HomePage({ searchParams }: HomePageProps) {
   requirePageAuth();
 
   const q = toSingleValue(searchParams?.q);
   const sex = toSingleValue(searchParams?.sex);
-  const appSettings = getAppSettings();
-  const patients = listPatients({ q, sex });
+  const appSettings = await getAppSettings();
+  const patients = await listPatients({ q, sex });
 
   const totalPatients = patients.length;
   const now = Date.now();

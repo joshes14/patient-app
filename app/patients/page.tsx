@@ -26,7 +26,7 @@ const fullName = (first: string, last: string, middle?: string | null): string =
   return [last, ", ", first, middle ? ` ${middle}` : ""].join("");
 };
 
-export default function PatientsIndexPage({ searchParams }: PatientsIndexPageProps) {
+export default async function PatientsIndexPage({ searchParams }: PatientsIndexPageProps) {
   requirePageAuth();
 
   const q = toSingleValue(searchParams?.q);
@@ -37,8 +37,8 @@ export default function PatientsIndexPage({ searchParams }: PatientsIndexPagePro
     reviewStatusRaw === "archived"
       ? reviewStatusRaw
       : "all";
-  const appSettings = getAppSettings();
-  const patients = listPatients({ q, sex, review_status: reviewStatus });
+  const appSettings = await getAppSettings();
+  const patients = await listPatients({ q, sex, review_status: reviewStatus });
 
   return (
     <StudioPageCanvas>

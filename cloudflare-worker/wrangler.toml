@@ -1,0 +1,9 @@
+name = "patientapp-backend"
+main = "src/index.ts"
+compatibility_date = "2026-04-13"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "patientapp"
+database_name = "patientapp"
+database_id = "2a4d6416-e3f6-44c3-9920-7697b8c6f672"

@@ -1,88 +1,63 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/lib/db";
+import { createHmac, timingSafeEqual } from "crypto";
 import { DEFAULT_PRACTITIONER_ID } from "@/lib/constants";
-import {
-  hashPassword,
-  needsPasswordHashUpgrade,
-  verifyPassword,
-} from "@/lib/password";
 
 export const AUTH_COOKIE_NAME = "clinic_auth";
+const SESSION_SECRET = process.env.CLINIC_SESSION_SECRET?.trim() || "change-me-session-secret";
 
-export function getPractitionerId(): string {
-  const practitioner = db
-    .prepare(
-      `
-      SELECT id
-      FROM practitioners
-      WHERE is_active = 1
-      ORDER BY datetime(created_at) ASC
-      LIMIT 1
-      `,
-    )
-    .get() as { id: string } | undefined;
+const signValue = (value: string): string => {
+  return createHmac("sha256", SESSION_SECRET).update(value).digest("hex");
+};
 
-  if (practitioner?.id) {
-    return practitioner.id;
+const encodeSession = (practitionerId: string): string => {
+  const value = practitionerId.trim();
+  const signature = signValue(value);
+  return `${value}.${signature}`;
+};
+
+const decodeSession = (value: string): string | null => {
+  const separator = value.lastIndexOf(".");
+  if (separator <= 0) {
+    return null;
   }
 
-  return DEFAULT_PRACTITIONER_ID;
-}
+  const practitionerId = value.slice(0, separator);
+  const signature = value.slice(separator + 1);
+  const expected = signValue(practitionerId);
 
-export function checkPractitionerId(input: string): boolean {
-  const practitionerId = input.trim();
-  if (practitionerId.length === 0) {
-    return false;
+  if (expected.length !== signature.length) {
+    return null;
   }
 
-  const row = db
-    .prepare(
-      `
-      SELECT id
-      FROM practitioners
-      WHERE id = ? AND is_active = 1
-      LIMIT 1
-      `,
-    )
-    .get(practitionerId) as { id: string } | undefined;
-
-  return Boolean(row?.id);
-}
-
-export function checkPassword(practitionerId: string, input: string): boolean {
-  const row = db
-    .prepare(
-      `
-      SELECT password
-      FROM practitioners
-      WHERE id = ? AND is_active = 1
-      LIMIT 1
-      `,
-    )
-    .get(practitionerId.trim()) as { password: string } | undefined;
-
-  if (!row) {
-    return false;
+  try {
+    if (!timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+      return null;
+    }
+  } catch {
+    return null;
   }
 
-  const isMatch = verifyPassword(input, row.password);
-  if (isMatch && needsPasswordHashUpgrade(row.password)) {
-    db.prepare(
-      `
-      UPDATE practitioners
-      SET password = ?, updated_at = datetime('now')
-      WHERE id = ?
-      `,
-    ).run(hashPassword(input), practitionerId.trim());
+  return practitionerId;
+};
+
+export function getAuthenticatedPractitionerId(): string | null {
+  const value = cookies().get(AUTH_COOKIE_NAME)?.value;
+  if (!value) {
+    return null;
   }
 
-  return isMatch;
+  return decodeSession(value);
 }
 
 export function isAuthenticated(): boolean {
-  return cookies().get(AUTH_COOKIE_NAME)?.value === "true";
+  const value = cookies().get(AUTH_COOKIE_NAME)?.value;
+  if (!value) {
+    return false;
+  }
+
+  return decodeSession(value) !== null;
 }
 
 export function requirePageAuth(): void {
@@ -92,9 +67,47 @@ export function requirePageAuth(): void {
 }
 
 export function requireApiAuth(request: NextRequest): NextResponse | null {
-  if (request.cookies.get(AUTH_COOKIE_NAME)?.value !== "true") {
+  const value = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+  if (!value) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (decodeSession(value) === null) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   return null;
+}
+
+export function getPractitionerId(): string {
+  return process.env.CLINIC_PRACTITIONER_ID?.trim() || DEFAULT_PRACTITIONER_ID;
+}
+
+export function createAuthCookieValue(practitionerId: string): string {
+  return encodeSession(practitionerId);
+}
+
+export function makeAuthCookieResponse(response: NextResponse, practitionerId: string): NextResponse {
+  response.cookies.set({
+    name: AUTH_COOKIE_NAME,
+    value: createAuthCookieValue(practitionerId),
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 12,
+    path: "/",
+  });
+
+  return response;
+}
+
+export function clearAuthCookieResponse(response: NextResponse): NextResponse {
+  response.cookies.set({
+    name: AUTH_COOKIE_NAME,
+    value: "",
+    maxAge: 0,
+    path: "/",
+  });
+
+  return response;
 }

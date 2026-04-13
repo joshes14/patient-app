@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import { getDentalHistory, upsertDentalHistory } from "@/lib/repository";
 import { dentalHistoryPayloadSchema } from "@/lib/validators";
@@ -12,16 +13,24 @@ type Context = {
 };
 
 export async function GET(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/dental`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
-  const dentalHistory = getDentalHistory(params.id);
+  const dentalHistory = await getDentalHistory(params.id);
   return NextResponse.json({ dentalHistory });
 }
 
 export async function PUT(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/dental`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -41,7 +50,7 @@ export async function PUT(request: NextRequest, { params }: Context) {
       );
     }
 
-    const dentalHistory = upsertDentalHistory(params.id, parsed.data);
+    const dentalHistory = await upsertDentalHistory(params.id, parsed.data);
     return NextResponse.json({ dentalHistory });
   } catch (error) {
     if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {

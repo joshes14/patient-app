@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import { getMedicalHistory, upsertMedicalHistory } from "@/lib/repository";
 import { medicalHistoryPayloadSchema } from "@/lib/validators";
@@ -12,16 +13,24 @@ type Context = {
 };
 
 export async function GET(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/medical`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
-  const medicalHistory = getMedicalHistory(params.id);
+  const medicalHistory = await getMedicalHistory(params.id);
   return NextResponse.json({ medicalHistory });
 }
 
 export async function PUT(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/medical`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -41,7 +50,7 @@ export async function PUT(request: NextRequest, { params }: Context) {
       );
     }
 
-    const medicalHistory = upsertMedicalHistory(params.id, parsed.data);
+    const medicalHistory = await upsertMedicalHistory(params.id, parsed.data);
     return NextResponse.json({ medicalHistory });
   } catch (error) {
     // Log details for debugging during development

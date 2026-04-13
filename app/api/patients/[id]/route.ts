@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import {
   deletePatient,
@@ -17,12 +18,16 @@ type Context = {
 };
 
 export async function GET(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
-  const bundle = getPatientBundle(params.id);
+  const bundle = await getPatientBundle(params.id);
   if (!bundle) {
     return NextResponse.json({ error: "Patient not found." }, { status: 404 });
   }
@@ -31,6 +36,10 @@ export async function GET(request: NextRequest, { params }: Context) {
 }
 
 export async function PUT(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -50,7 +59,7 @@ export async function PUT(request: NextRequest, { params }: Context) {
       );
     }
 
-    const patient = updatePatient(params.id, parsed.data);
+    const patient = await updatePatient(params.id, parsed.data);
     return NextResponse.json({ patient });
   } catch (error) {
     if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
@@ -62,6 +71,10 @@ export async function PUT(request: NextRequest, { params }: Context) {
 }
 
 export async function PATCH(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -85,7 +98,7 @@ export async function PATCH(request: NextRequest, { params }: Context) {
       return NextResponse.json({ error: "Unsupported patient status." }, { status: 400 });
     }
 
-    const patient = updatePatientReviewStatus(params.id, parsed.data.review_status);
+    const patient = await updatePatientReviewStatus(params.id, parsed.data.review_status);
     return NextResponse.json({ patient });
   } catch (error) {
     if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
@@ -97,13 +110,17 @@ export async function PATCH(request: NextRequest, { params }: Context) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
   try {
-    const deleted = deletePatient(params.id);
+    const deleted = await deletePatient(params.id);
     if (!deleted) {
       return NextResponse.json({ error: "Patient not found." }, { status: 404 });
     }

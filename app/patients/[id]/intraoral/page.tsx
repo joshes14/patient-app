@@ -22,15 +22,15 @@ const toSingleValue = (value?: string | string[]): string => {
   return value ?? "";
 };
 
-export default function PatientIntraoralPage({ params, searchParams }: PatientIntraoralPageProps) {
+export default async function PatientIntraoralPage({ params, searchParams }: PatientIntraoralPageProps) {
   requirePageAuth();
 
-  const patient = getPatientById(params.id);
+  const patient = await getPatientById(params.id);
   if (!patient) {
     notFound();
   }
 
-  const intraoralExam = getLatestIntraoralExam(patient.id);
+  const intraoralExam = await getLatestIntraoralExam(patient.id);
   const editMode = toSingleValue(searchParams?.edit) === "1";
 
   return (

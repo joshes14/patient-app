@@ -1,6 +1,7 @@
 import {
   mkdirSync,
   copyFileSync,
+  writeFileSync,
   rmSync,
   existsSync,
   cpSync,
@@ -11,6 +12,19 @@ import { dirname, extname, join, resolve } from "node:path";
 
 const root = resolve(process.cwd());
 const outputDir = join(root, "release", "next");
+
+const requiredEnv = [
+  "CLINIC_BACKEND_URL",
+  "NEXT_PUBLIC_CLINIC_BACKEND_URL",
+  "CLINIC_SESSION_SECRET",
+  "CLINIC_PASSWORD",
+  "CLINIC_PRACTITIONER_ID",
+];
+
+const missingEnv = requiredEnv.filter((key) => !process.env[key]?.trim());
+if (missingEnv.length > 0) {
+  throw new Error(`Missing required build env vars: ${missingEnv.join(", ")}`);
+}
 
 const ensureExists = (path, label) => {
   if (!existsSync(path)) {
@@ -43,6 +57,17 @@ if (existsSync(nextPublicDir)) {
 const launcherSource = join(root, "scripts", "next-standalone-launcher.js");
 ensureExists(launcherSource, "Next launcher script");
 copyFileSync(launcherSource, join(outputDir, "next-launcher.js"));
+
+const envFilePath = join(outputDir, ".env");
+const envFileContent = [
+  `CLINIC_BACKEND_URL=${process.env.CLINIC_BACKEND_URL}`,
+  `NEXT_PUBLIC_CLINIC_BACKEND_URL=${process.env.NEXT_PUBLIC_CLINIC_BACKEND_URL}`,
+  `CLINIC_SESSION_SECRET=${process.env.CLINIC_SESSION_SECRET}`,
+  `CLINIC_PASSWORD=${process.env.CLINIC_PASSWORD}`,
+  `CLINIC_PRACTITIONER_ID=${process.env.CLINIC_PRACTITIONER_ID}`,
+  "",
+].join("\n");
+writeFileSync(envFilePath, envFileContent);
 
 const runtimeDir = join(outputDir, "runtime");
 mkdirSync(runtimeDir, { recursive: true });

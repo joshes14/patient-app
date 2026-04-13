@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import {
   deactivatePractitioner,
@@ -15,6 +16,10 @@ type Context = {
 };
 
 export async function PATCH(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/settings/practitioners/${encodeURIComponent(params.id)}`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -34,7 +39,7 @@ export async function PATCH(request: NextRequest, { params }: Context) {
       );
     }
 
-    const practitioner = updatePractitionerPassword(params.id, parsed.data.password);
+    const practitioner = await updatePractitionerPassword(params.id, parsed.data.password);
     if (!practitioner) {
       return NextResponse.json({ error: "Practitioner not found." }, { status: 404 });
     }
@@ -46,13 +51,17 @@ export async function PATCH(request: NextRequest, { params }: Context) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/settings/practitioners/${encodeURIComponent(params.id)}`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
   try {
-    const practitioner = deactivatePractitioner(params.id);
+    const practitioner = await deactivatePractitioner(params.id);
     if (!practitioner) {
       return NextResponse.json({ error: "Practitioner not found." }, { status: 404 });
     }

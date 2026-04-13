@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import { getLatestIntraoralExam, upsertIntraoralExam } from "@/lib/repository";
 import { intraoralPayloadSchema } from "@/lib/validators";
@@ -12,16 +13,24 @@ type Context = {
 };
 
 export async function GET(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/intraoral`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
-  const intraoralExam = getLatestIntraoralExam(params.id);
+  const intraoralExam = await getLatestIntraoralExam(params.id);
   return NextResponse.json({ intraoralExam });
 }
 
 export async function PUT(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/intraoral`);
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -41,7 +50,7 @@ export async function PUT(request: NextRequest, { params }: Context) {
       );
     }
 
-    const intraoralExam = upsertIntraoralExam(params.id, parsed.data);
+    const intraoralExam = await upsertIntraoralExam(params.id, parsed.data);
     return NextResponse.json({ intraoralExam });
   } catch (error) {
     if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {

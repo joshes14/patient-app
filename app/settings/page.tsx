@@ -4,11 +4,11 @@ import StudioPageCanvas from "@/components/studio-page-canvas";
 import { requirePageAuth } from "@/lib/auth";
 import { getAppSettings, listPractitioners } from "@/lib/repository";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
   requirePageAuth();
 
-  const appSettings = getAppSettings();
-  const practitioners = listPractitioners();
+  const appSettings = await getAppSettings();
+  const practitioners = await listPractitioners();
 
   return (
     <StudioPageCanvas>

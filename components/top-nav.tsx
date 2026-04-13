@@ -6,8 +6,8 @@ type TopNavProps = {
   subtitle?: string;
 };
 
-export default function TopNav({ subtitle }: TopNavProps) {
-  const appSettings = getAppSettings();
+export default async function TopNav({ subtitle }: TopNavProps) {
+  const appSettings = await getAppSettings();
 
   return (
     <header className="font-body mb-6 rounded-3xl border border-[#c4c7c3]/30 bg-white/85 p-4 shadow-[0_20px_40px_-28px_rgba(26,28,25,0.45)] backdrop-blur-sm sm:p-5">

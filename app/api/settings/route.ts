@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { proxyRequestToBackend, isBackendProxyMode } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import { getAppSettings, updateAppSettings } from "@/lib/repository";
 import { appSettingsPayloadSchema } from "@/lib/validators";
@@ -6,16 +7,19 @@ import { appSettingsPayloadSchema } from "@/lib/validators";
 export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
-  const unauthorized = requireApiAuth(request);
-  if (unauthorized) {
-    return unauthorized;
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, "/api/settings");
   }
 
-  const settings = getAppSettings();
+  const settings = await getAppSettings();
   return NextResponse.json({ settings });
 }
 
 export async function PUT(request: NextRequest) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, "/api/settings");
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -35,7 +39,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const settings = updateAppSettings(parsed.data);
+    const settings = await updateAppSettings(parsed.data);
     return NextResponse.json({ settings });
   } catch {
     return NextResponse.json({ error: "Unable to update settings." }, { status: 500 });

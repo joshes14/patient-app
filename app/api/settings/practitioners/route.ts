@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
 import { createPractitioner, listPractitioners } from "@/lib/repository";
 import { practitionerPayloadSchema } from "@/lib/validators";
@@ -6,16 +7,24 @@ import { practitionerPayloadSchema } from "@/lib/validators";
 export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, "/api/settings/practitioners");
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
   }
 
-  const practitioners = listPractitioners();
+  const practitioners = await listPractitioners();
   return NextResponse.json({ practitioners });
 }
 
 export async function POST(request: NextRequest) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, "/api/settings/practitioners");
+  }
+
   const unauthorized = requireApiAuth(request);
   if (unauthorized) {
     return unauthorized;
@@ -35,7 +44,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const practitioner = createPractitioner(parsed.data);
+    const practitioner = await createPractitioner(parsed.data);
     return NextResponse.json({ practitioner }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && /UNIQUE constraint failed/.test(error.message)) {

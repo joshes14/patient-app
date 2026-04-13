@@ -28,6 +28,11 @@ clinic.db-*
 # tauri sidecar build artifacts
 release/
 
+# cloudflare worker generated state/exports
+cloudflare-worker/.wrangler/
+cloudflare-worker/*.sql
+!cloudflare-worker/migrations/*.sql
+
 opencode.json
 
 src-tauri/binaries/

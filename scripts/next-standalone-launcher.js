@@ -3,6 +3,28 @@ const path = require("node:path");
 
 const launcherDir = __dirname;
 const serverDir = path.join(launcherDir, "server");
+const envFilePath = path.join(launcherDir, ".env");
+
+if (fs.existsSync(envFilePath)) {
+  const envFile = fs.readFileSync(envFilePath, "utf8");
+  for (const line of envFile.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+
+    const separatorIndex = trimmed.indexOf("=");
+    if (separatorIndex <= 0) {
+      continue;
+    }
+
+    const key = trimmed.slice(0, separatorIndex).trim();
+    const value = trimmed.slice(separatorIndex + 1);
+    if (!(key in process.env)) {
+      process.env[key] = value;
+    }
+  }
+}
 
 process.env.HOSTNAME = "127.0.0.1";
 process.env.PORT = process.env.NEXT_SERVER_PORT || "4120";
