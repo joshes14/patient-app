@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isBackendProxyMode, proxyRequestToBackend } from "@/lib/backend-client";
 import { requireApiAuth } from "@/lib/auth";
-import { getMedicalHistory, upsertMedicalHistory } from "@/lib/repository";
+import { getMedicalHistory } from "@/lib/repository";
 import { medicalHistoryPayloadSchema } from "@/lib/validators";
+import { localUpsertMedicalHistory } from "@/lib/server/local-repository";
 
 export const runtime = "nodejs";
 
@@ -50,7 +51,7 @@ export async function PUT(request: NextRequest, { params }: Context) {
       );
     }
 
-    const medicalHistory = await upsertMedicalHistory(params.id, parsed.data);
+    const medicalHistory = await localUpsertMedicalHistory(params.id, parsed.data);
     return NextResponse.json({ medicalHistory });
   } catch (error) {
     // Log details for debugging during development

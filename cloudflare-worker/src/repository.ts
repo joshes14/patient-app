@@ -849,7 +849,7 @@ export const upsertMedicalHistory = async (
         ?, ?, ?, ?,
         ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?
       )
@@ -1262,6 +1262,39 @@ export const updateTreatmentPlan = async (
     `,
     [planId],
   );
+};
+
+export const deleteTreatmentPlan = async (env: Env, patientId: string, planId: string): Promise<boolean> => {
+  const db = getDb(env);
+  const exists = await dbFirst<{ id: string }>(
+    db,
+    `
+    SELECT id
+    FROM patients
+    WHERE id = ?
+    `,
+    [patientId],
+  );
+
+  if (!exists) {
+    throw new Error("PATIENT_NOT_FOUND");
+  }
+
+  const result = await dbRun(
+    db,
+    `
+    DELETE FROM treatment_plans
+    WHERE id = ? AND patient_id = ?
+    `,
+    [planId, patientId],
+  );
+
+  if (result.changes === 0) {
+    return false;
+  }
+
+  await touchPatientUpdatedAt(env, patientId);
+  return true;
 };
 
 export const listTreatmentRecords = async (env: Env, patientId: string): Promise<TreatmentRecord[]> => {

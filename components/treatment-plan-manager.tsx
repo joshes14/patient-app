@@ -49,6 +49,7 @@ export default function TreatmentPlanManager({
     supervisor_date: "",
   });
   const [isPending, setIsPending] = useState(false);
+  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -100,6 +101,31 @@ export default function TreatmentPlanManager({
     }
 
     setMessage("Treatment plan added.");
+  };
+
+  const handleDelete = async (planId: string) => {
+    if (isPending || deletingPlanId) {
+      return;
+    }
+
+    setError("");
+    setMessage("");
+    setDeletingPlanId(planId);
+
+    const response = await fetch(`/api/patients/${patientId}/plan?planId=${encodeURIComponent(planId)}`, {
+      method: "DELETE",
+    });
+
+    setDeletingPlanId(null);
+
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      setError(payload?.error ?? "Unable to delete treatment plan.");
+      return;
+    }
+
+    setPlans((prev) => prev.filter((plan) => plan.id !== planId));
+    setMessage("Treatment plan deleted.");
   };
 
   return (
@@ -214,6 +240,19 @@ export default function TreatmentPlanManager({
           <div className="grid gap-3 lg:grid-cols-2">
             {plans.map((plan) => (
               <article key={plan.id} className="rounded-2xl border border-[#c4c7c3]/45 bg-white p-4">
+                <div className="mb-3 flex items-start justify-between gap-2">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#5a6159]">Plan Entry</p>
+                  <button
+                    type="button"
+                    disabled={isPending || deletingPlanId !== null}
+                    onClick={() => {
+                      void handleDelete(plan.id);
+                    }}
+                    className="rounded-full border border-[#b84c4c]/35 bg-[#fff6f6] px-3 py-1 text-[10px] uppercase tracking-[0.12em] text-[#8d2f2f] transition-colors hover:bg-[#ffe8e8] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {deletingPlanId === plan.id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
                 <p className="whitespace-pre-wrap text-sm text-[#1a1c19]">{plan.plan_text}</p>
 
                 <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">

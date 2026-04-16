@@ -5,6 +5,7 @@ import {
   createPatient,
   createPractitioner,
   createTreatmentPlan,
+  deleteTreatmentPlan,
   createTreatmentRecord,
   deactivatePractitioner,
   ensureSeedData,
@@ -203,6 +204,7 @@ const routeSettings = async (request: Request, env: Env, path: string): Promise<
         return jsonWithCors({ error: "Unable to deactivate practitioner." }, { status: 500 });
       }
     }
+
   }
 
   return notFound("Route not implemented yet in Worker backend.");
@@ -455,6 +457,29 @@ const routePatients = async (request: Request, env: Env, path: string): Promise<
         }
 
         return jsonWithCors({ error: "Unable to update plan status." }, { status: 500 });
+      }
+    }
+
+    if (request.method === "DELETE") {
+      const url = new URL(request.url);
+      const planId = url.searchParams.get("planId");
+      if (!planId) {
+        return jsonWithCors({ error: "Missing planId query parameter." }, { status: 400 });
+      }
+
+      try {
+        const deleted = await deleteTreatmentPlan(env, patientId, planId);
+        if (!deleted) {
+          return jsonWithCors({ error: "Treatment plan not found." }, { status: 404 });
+        }
+
+        return jsonWithCors({ ok: true });
+      } catch (error) {
+        if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
+          return jsonWithCors({ error: "Patient not found." }, { status: 404 });
+        }
+
+        return jsonWithCors({ error: "Unable to delete treatment plan." }, { status: 500 });
       }
     }
   }

@@ -73,6 +73,116 @@ const touchPatientUpdatedAt = (patientId: string): void => {
   ).run(patientId);
 };
 
+export const hydratePatientFromRemote = (patient: Patient): void => {
+  db.prepare(
+    `
+    INSERT INTO patients (
+      id, medical_alert, last_name, first_name, middle_name,
+      date_of_birth, age, sex, civil_status, religion, occupation, nationality,
+      height, weight, home_address, home_telephone, cellphone,
+      emergency_contact_name, emergency_contact_telephone, emergency_contact_address,
+      relationship_to_patient, chief_complaint, history_of_present_illness,
+      review_status, created_at, updated_at
+    ) VALUES (
+      ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?,
+      ?, ?, ?,
+      ?, ?, ?,
+      ?, ?, ?
+    )
+    ON CONFLICT(id) DO UPDATE SET
+      medical_alert = excluded.medical_alert,
+      last_name = excluded.last_name,
+      first_name = excluded.first_name,
+      middle_name = excluded.middle_name,
+      date_of_birth = excluded.date_of_birth,
+      age = excluded.age,
+      sex = excluded.sex,
+      civil_status = excluded.civil_status,
+      religion = excluded.religion,
+      occupation = excluded.occupation,
+      nationality = excluded.nationality,
+      height = excluded.height,
+      weight = excluded.weight,
+      home_address = excluded.home_address,
+      home_telephone = excluded.home_telephone,
+      cellphone = excluded.cellphone,
+      emergency_contact_name = excluded.emergency_contact_name,
+      emergency_contact_telephone = excluded.emergency_contact_telephone,
+      emergency_contact_address = excluded.emergency_contact_address,
+      relationship_to_patient = excluded.relationship_to_patient,
+      chief_complaint = excluded.chief_complaint,
+      history_of_present_illness = excluded.history_of_present_illness,
+      review_status = excluded.review_status,
+      updated_at = excluded.updated_at
+    `,
+  ).run(
+    patient.id,
+    nullableText(patient.medical_alert),
+    patient.last_name.trim(),
+    patient.first_name.trim(),
+    nullableText(patient.middle_name),
+    nullableText(patient.date_of_birth),
+    nullableNumber(patient.age),
+    nullableText(patient.sex),
+    nullableText(patient.civil_status),
+    nullableText(patient.religion),
+    nullableText(patient.occupation),
+    nullableText(patient.nationality),
+    nullableText(patient.height),
+    nullableText(patient.weight),
+    nullableText(patient.home_address),
+    nullableText(patient.home_telephone),
+    nullableText(patient.cellphone),
+    nullableText(patient.emergency_contact_name),
+    nullableText(patient.emergency_contact_telephone),
+    nullableText(patient.emergency_contact_address),
+    nullableText(patient.relationship_to_patient),
+    nullableText(patient.chief_complaint),
+    nullableText(patient.history_of_present_illness),
+    normalizeReviewStatus(patient.review_status),
+    patient.created_at,
+    patient.updated_at,
+  );
+};
+
+export const hydrateTreatmentPlansFromRemote = (plans: TreatmentPlan[]): void => {
+  const statement = db.prepare(
+    `
+    INSERT INTO treatment_plans (
+      id, patient_id, plan_text, clinician_name, clinician_signature,
+      clinician_date, supervisor_name, supervisor_signature, supervisor_date, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      patient_id = excluded.patient_id,
+      plan_text = excluded.plan_text,
+      clinician_name = excluded.clinician_name,
+      clinician_signature = excluded.clinician_signature,
+      clinician_date = excluded.clinician_date,
+      supervisor_name = excluded.supervisor_name,
+      supervisor_signature = excluded.supervisor_signature,
+      supervisor_date = excluded.supervisor_date,
+      created_at = excluded.created_at
+    `,
+  );
+
+  for (const plan of plans) {
+    statement.run(
+      plan.id,
+      plan.patient_id,
+      plan.plan_text.trim(),
+      nullableText(plan.clinician_name),
+      nullableText(plan.clinician_signature),
+      nullableText(plan.clinician_date),
+      nullableText(plan.supervisor_name),
+      nullableText(plan.supervisor_signature),
+      nullableText(plan.supervisor_date),
+      plan.created_at,
+    );
+  }
+};
+
 export const getAppSettings = (): AppSettings => {
   let row: AppSettings | undefined;
 
@@ -1076,6 +1186,26 @@ export const updateTreatmentPlan = (
     .get(planId) as TreatmentPlan;
 };
 
+export const deleteTreatmentPlan = (patientId: string, planId: string): boolean => {
+  ensurePatientExists(patientId);
+
+  const result = db
+    .prepare(
+      `
+      DELETE FROM treatment_plans
+      WHERE id = ? AND patient_id = ?
+      `,
+    )
+    .run(planId, patientId);
+
+  if (result.changes === 0) {
+    return false;
+  }
+
+  touchPatientUpdatedAt(patientId);
+  return true;
+};
+
 export const listTreatmentRecords = (patientId: string): TreatmentRecord[] => {
   ensurePatientExists(patientId);
   return db
@@ -1167,6 +1297,9 @@ export {
   listTreatmentPlans as localListTreatmentPlans,
   createTreatmentPlan as localCreateTreatmentPlan,
   updateTreatmentPlan as localUpdateTreatmentPlan,
+  deleteTreatmentPlan as localDeleteTreatmentPlan,
+  hydratePatientFromRemote as localHydratePatientFromRemote,
+  hydrateTreatmentPlansFromRemote as localHydrateTreatmentPlansFromRemote,
   listTreatmentRecords as localListTreatmentRecords,
   createTreatmentRecord as localCreateTreatmentRecord,
   getPatientBundle as localGetPatientBundle,

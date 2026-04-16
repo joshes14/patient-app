@@ -311,6 +311,18 @@ export async function updateTreatmentPlan(
   return response?.plan ?? null;
 }
 
+export async function deleteTreatmentPlan(patientId: string, planId: string): Promise<boolean> {
+  if (!isBackendProxyMode()) {
+    return withLocal((repository) => repository.localDeleteTreatmentPlan(patientId, planId));
+  }
+
+  const response = await backendJson<{ ok: boolean }>(
+    `/api/patients/${encodeURIComponent(patientId)}/plan?planId=${encodeURIComponent(planId)}`,
+    jsonInit("DELETE"),
+  );
+  return Boolean(response.ok);
+}
+
 export async function listTreatmentRecords(patientId: string): Promise<TreatmentRecord[]> {
   if (!isBackendProxyMode()) {
     return withLocal((repository) => repository.localListTreatmentRecords(patientId));

@@ -7,6 +7,7 @@ import {
   updateTreatmentPlan,
 } from "@/lib/repository";
 import { treatmentPlanPayloadSchema } from "@/lib/validators";
+import { localDeleteTreatmentPlan } from "@/lib/server/local-repository";
 
 export const runtime = "nodejs";
 
@@ -127,5 +128,36 @@ export async function PATCH(request: NextRequest, { params }: Context) {
     }
 
     return NextResponse.json({ error: "Unable to update plan status." }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest, { params }: Context) {
+  if (isBackendProxyMode()) {
+    return proxyRequestToBackend(request, `/api/patients/${encodeURIComponent(params.id)}/plan${new URL(request.url).search}`);
+  }
+
+  const unauthorized = requireApiAuth(request);
+  if (unauthorized) {
+    return unauthorized;
+  }
+
+  const planId = new URL(request.url).searchParams.get("planId");
+  if (!planId) {
+    return NextResponse.json({ error: "Missing planId query parameter." }, { status: 400 });
+  }
+
+  try {
+    const deleted = await localDeleteTreatmentPlan(params.id, planId);
+    if (!deleted) {
+      return NextResponse.json({ error: "Treatment plan not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
+      return NextResponse.json({ error: "Patient not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({ error: "Unable to delete treatment plan." }, { status: 500 });
   }
 }
